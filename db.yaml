@@ -1,0 +1,50 @@
+- nme: Configure SQL DB
+  hosts: localhost
+  become: yes
+  vars:
+    login_host: 172.31.23.125 
+
+  vars_promp:
+  - name: mysql_root_password
+    prompt: Enter Root password
+    private: no
+
+  tasks:
+  - name: Install MYSQL DataBase
+    ansible.builtin.dnf:
+      name: mysql-server
+      state: latest
+
+  - name: Start My SQL Server
+    ansible.builtin.service:
+      name: mysqld
+      state: started
+      enabled: yes
+
+  - name: Install Python MYSQL Dependencies
+    ansible.builtin.pip:
+      name:
+      - PyMySQL
+      - cryptography
+      executable: pip3.9
+    
+  # Check the password is already set-up or not
+  
+  - name: Check the DB connection
+    community.mysql.mysql_info:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_host: "{{ login_host }}"
+      filter: version
+      ignore_errors: yes
+      register: mysql_connection_output
+
+  - name: Print output 
+    ansible.builtin.debug:
+      msg: "Output: {{ mysql_connection_output }}"
+
+  - name: Setup Root password
+    ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ mysql_root_password }}"
+    when: mysql_connection_output.failed is true
+    
+    
