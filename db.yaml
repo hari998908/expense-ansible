@@ -1,4 +1,4 @@
-- nme: Configure SQL DB
+- name: Configure SQL DB
   hosts: localhost
   become: yes
   vars:
