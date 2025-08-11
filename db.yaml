@@ -10,7 +10,7 @@
     private: no
 
   tasks:
-  - name: Install MYSQL DataBase
+  - name: Install MYSQL DataBas
     ansible.builtin.dnf:
       name: mysql-server
       state: latest
@@ -36,8 +36,8 @@
       login_password: "{{ mysql_root_password }}"
       login_host: "{{ login_host }}"
       filter: version
-      ignore_errors: yes
-      register: mysql_connection_output
+    ignore_errors: yes
+    register: mysql_connection_output
 
   - name: Print output 
     ansible.builtin.debug:
@@ -45,6 +45,6 @@
 
   - name: Setup Root password
     ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ mysql_root_password }}"
-    when: mysql_connection_output.failed is true
+    when: mysql_connection_output.failed is true # don't give {{ }} in when condition
     
     
